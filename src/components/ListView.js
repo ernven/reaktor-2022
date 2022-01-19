@@ -31,14 +31,20 @@ const getOutcome = (playerA, playerB) => {
 
 export default function ListView({ players, data }) {
 
+  const buildList = () => {
+    let list = []
+    players.forEach(player => list.push(<p key={player}>{player}</p>))
+    return list
+  }
+
   // This component should ask the user for a player and then show its details.
 
   return (
     <div>
-    <h5 style={{color: 'blue'}} >Player stats</h5>
-      <ul>
-        {players ? players.forEach(player => <li key={player.name}>{player.name}</li>) : null}
-      </ul>
+      <h5 style={{color: 'blue'}} >Player stats</h5>
+
+      {buildList()}
+
     </div>
   )
 }

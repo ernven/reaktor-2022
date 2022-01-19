@@ -6,7 +6,7 @@ import RealTimeView from './RealTimeView'
 export default function Main() {
   const [historicalData, setHistoricalData] = useState([])
   const [realTimeData, setRealTimeData] = useState([])
-  const [playerList, setPlayerList] = useState(null)
+  const [playerList, setPlayerList] = useState(new Set())
 
   const webSocket = new WebSocket(process.env.REACT_APP_WS_URL)
 
@@ -17,33 +17,34 @@ export default function Main() {
       const parsedData = JSON.parse(JSON.parse(e.data))
 
       if (parsedData.type === 'GAME_BEGIN') {
-        // Let's keep real time games list to 5 entries.
-        if (realTimeData.length < 6) {
-          setRealTimeData([...realTimeData, parsedData])
-        } else {
-          let tempArray
-          for (let i = 5; i > 0; i--) {
-            tempArray[i] = realTimeData[i - 1]
-          }
-          tempArray[0] = parsedData
-          console.log(tempArray)
-          console.log(realTimeData)
-          setRealTimeData(tempArray)
-        }
-      } else if (parsedData.type === 'GAME_RESULT') {
-        // Do something else. 
-        for (let i = 0; i < 5; i++) {
-          if (realTimeData[i] && realTimeData[i].gameId === parsedData.gameId) {
-            let tempArray = realTimeData
-            tempArray[i] = parsedData
+        // Double check to avoid adding repeats.
+        if (!realTimeData.includes(parsedData)) {
+          // Let's keep real time games list to 5 entries.
+          if (realTimeData.length < 6) {
             setRealTimeData([...realTimeData, parsedData])
+          } else {
+            let tempArray
+            for (let i = 5; i > 0; i--) {
+              tempArray[i] = realTimeData[i - 1]
+            }
+            tempArray[0] = parsedData
+            setRealTimeData(tempArray)
           }
-        }
+        } else if (parsedData.type === 'GAME_RESULT') {
+          // Do something else. 
+          for (let i = 0; i < 5; i++) {
+            if (realTimeData[i] && realTimeData[i].gameId === parsedData.gameId) {
+              let tempArray = realTimeData
+              tempArray[i] = parsedData
+              setRealTimeData([...realTimeData, parsedData])
+            }
+          }
 
-        // Also add the data to historical data.
-        let tempArray = historicalData
-        tempArray.push(parsedData)
-        setHistoricalData(tempArray)
+          // Also add the data to historical data.
+          let tempArray = historicalData
+          tempArray.push(parsedData)
+          setHistoricalData(tempArray)
+        }
       }
     }
   }
