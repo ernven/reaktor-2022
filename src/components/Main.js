@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
-import ListView from './ListView'
 import RealTimeView from './RealTimeView'
+import Historical from './Historical/Historical'
 
 export default function Main() {
   const [historicalData, setHistoricalData] = useState([])
@@ -87,7 +87,7 @@ export default function Main() {
   return (
     <div>
       <RealTimeView data={realTimeData} />
-      <ListView data={historicalData} players={playerList} />
+      <Historical data={historicalData} players={playerList} />
     </div>
   )
 }
