@@ -7,7 +7,6 @@ export default function PlayerCard({ player, data }) {
 
   const buildPlayerCard = () => {
     if (player) {
-
       const playerStats = getPlayerStats(player, data)
 
       // Handling many values for most played hand.
@@ -19,7 +18,6 @@ export default function PlayerCard({ player, data }) {
           for (let i = 0; i < playerStats.mostPlayed.length; i++) {
             hands = (i === 0) ? playerStats.mostPlayed[i] : (hands + ', ' + playerStats.mostPlayed[i])
           }
-          console.log(hands)
           return hands
         }
       }

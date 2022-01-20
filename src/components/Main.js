@@ -1,63 +1,53 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useReducer } from 'react'
+import { Divider } from '@mui/material'
 
-import RealTimeView from './RealTimeView/RealTimeView'
+import RealTime from './RealTime/RealTime'
 import Historical from './Historical/Historical'
 
 import './Main.css'
 
-export default function Main() {
-  const [historicalData, setHistoricalData] = useState([])
-  const [realTimeData, setRealTimeData] = useState([])
-  const [playerList, setPlayerList] = useState([])
+const dataReducer = (state = {live: [], historical: []}, action) => {
+  switch (action.type) {
+    case 'GAME_BEGIN':
+      let liveData = state.live
 
-/*  const webSocket = new WebSocket(process.env.REACT_APP_WS_URL)
+      // Double check to avoid adding repeats.
+      if (!(liveData.some(e => e.gameId === action.payload.gameId))) {
+        liveData.push(action.payload)
+      }
+      return {...state, live: liveData}
 
-  webSocket.onmessage = e => {
-    if (e.data) {
+    case 'GAME_RESULT':
+      let prevLiveData = state.live
 
-      // With websockets, the data has an unusual string format, so it takes 2 parses to become a regular object.
-      const parsedData = JSON.parse(JSON.parse(e.data))
-
-      if (parsedData.type === 'GAME_BEGIN') {
-        // Double check to avoid adding repeats.
-        if (!realTimeData.includes(parsedData)) {
-          // Let's keep real time games list to 5 entries.
-          if (realTimeData.length < 6) {
-            setRealTimeData([...realTimeData, parsedData])
-          } else {
-            let tempArray
-            for (let i = 5; i > 0; i--) {
-              tempArray[i] = realTimeData[i - 1]
-            }
-            tempArray[0] = parsedData
-            setRealTimeData(tempArray)
-          }
-        } else if (parsedData.type === 'GAME_RESULT') {
-          // Do something else. 
-          for (let i = 0; i < 5; i++) {
-            if (realTimeData[i] && realTimeData[i].gameId === parsedData.gameId) {
-              let tempArray = realTimeData
-              tempArray[i] = parsedData
-              setRealTimeData([...realTimeData, parsedData])
-            }
-          }
-
-          // Also add the data to historical data.
-          let tempArray = historicalData
-          tempArray.push(parsedData)
-          setHistoricalData(tempArray)
+      // We remove the game and add it to the result history.
+      for (let i = 0; i < prevLiveData.length; i++) {
+        if (prevLiveData[i].gameId === action.payload.gameId) {
+          prevLiveData.splice(i, 1)
         }
       }
-    }
-  }*/
+      const newHistoricalData = state.historical.concat(action.payload)
+
+      // Also add the data to historical data.
+      return {live: prevLiveData, historical: newHistoricalData}
+
+    default:
+      return state
+  }
+}
+
+export default function Main() {
+  const [playerList, setPlayerList] = useState([])
+
+  const [data, dispatch] = useReducer(dataReducer, {live: [], historical: []})
 
   useEffect(() => {
     const fetchData = async () => {
       let url = '/rps/history'
       let fetchedData = []
       let players = []
-      // Let's keep the total data under 1000 for now.
-      while (fetchedData.length < 2000) {
+      // Let's keep the total data under 10000 for now.
+      while (fetchedData.length < 200000) {
         
         const { cursor, data } = await fetch(url)
           .then(res => res.status === 200 ? res.json() : console.log('Error: ' + res.status))
@@ -70,6 +60,12 @@ export default function Main() {
             if (!players.includes(data[i].playerA.name)) { players.push(data[i].playerA.name) }
             if (!players.includes(data[i].playerB.name)) { players.push(data[i].playerB.name) }
           }
+
+          // Update the data.
+          dispatch({ type: 'GAME_RESULT', payload: fetchedData})
+
+          // Update the player list if needed.
+          if (players !== playerList) { setPlayerList(players) }
   
           // Set the next url for continue fetching
           url = cursor
@@ -77,22 +73,20 @@ export default function Main() {
           break
         }
       }
-      setHistoricalData(fetchedData)
-      setPlayerList(players)
     }
 
     fetchData()
-
-  }, [])
+  }, [playerList])
 
 
   return (
     <div id='main-container'>
-      <div id='historical-container'>
-        <Historical data={historicalData} players={playerList} />  
-      </div>
       <div id='live-container'>  
-        <RealTimeView data={realTimeData} />
+        <RealTime data={data.live} dispatch={dispatch} />
+      </div>
+      <Divider orientation='vertical' flexItem={true} />
+      <div id='historical-container'>
+        <Historical data={data.historical} players={playerList} />  
       </div>
     </div>
   )
