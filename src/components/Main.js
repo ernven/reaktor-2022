@@ -8,7 +8,7 @@ export default function Main() {
   const [realTimeData, setRealTimeData] = useState([])
   const [playerList, setPlayerList] = useState(new Set())
 
-  const webSocket = new WebSocket(process.env.REACT_APP_WS_URL)
+/*  const webSocket = new WebSocket(process.env.REACT_APP_WS_URL)
 
   webSocket.onmessage = e => {
     if (e.data) {
@@ -47,7 +47,7 @@ export default function Main() {
         }
       }
     }
-  }
+  }*/
 
   useEffect(() => {
     const fetchData = async () => {
