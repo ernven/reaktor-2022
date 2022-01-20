@@ -10,7 +10,7 @@ export default function Historical({ players, data }) {
 
   return (
     <div>
-      <Typography variant='h5' color='darkblue' >Player stats</Typography>
+      <Typography variant='h4' color='darkblue' >Historical Stats</Typography>
 
       <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
 

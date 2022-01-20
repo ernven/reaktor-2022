@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 
-import RealTimeView from './RealTimeView'
+import RealTimeView from './RealTimeView/RealTimeView'
 import Historical from './Historical/Historical'
+
+import './Main.css'
 
 export default function Main() {
   const [historicalData, setHistoricalData] = useState([])
@@ -85,9 +87,13 @@ export default function Main() {
 
 
   return (
-    <div>
-      <RealTimeView data={realTimeData} />
-      <Historical data={historicalData} players={playerList} />
+    <div id='main-container'>
+      <div id='historical-container'>
+        <Historical data={historicalData} players={playerList} />  
+      </div>
+      <div id='live-container'>  
+        <RealTimeView data={realTimeData} />
+      </div>
     </div>
   )
 }
