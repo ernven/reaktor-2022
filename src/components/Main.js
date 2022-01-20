@@ -8,7 +8,7 @@ import './Main.css'
 export default function Main() {
   const [historicalData, setHistoricalData] = useState([])
   const [realTimeData, setRealTimeData] = useState([])
-  const [playerList, setPlayerList] = useState(new Set())
+  const [playerList, setPlayerList] = useState([])
 
 /*  const webSocket = new WebSocket(process.env.REACT_APP_WS_URL)
 
@@ -55,9 +55,9 @@ export default function Main() {
     const fetchData = async () => {
       let url = '/rps/history'
       let fetchedData = []
-      let players = new Set()
+      let players = []
       // Let's keep the total data under 1000 for now.
-      while (fetchedData.length < 1000) {
+      while (fetchedData.length < 2000) {
         
         const { cursor, data } = await fetch(url)
           .then(res => res.status === 200 ? res.json() : console.log('Error: ' + res.status))
@@ -67,8 +67,8 @@ export default function Main() {
 
           // We can keep track of the players so we can use it later.
           for (let i = 0; i < data.length; i++) {
-            if (!players.has(data[i].playerA.name)) { players.add(data[i].playerA.name) }
-            if (!players.has(data[i].playerB.name)) { players.add(data[i].playerB.name) }
+            if (!players.includes(data[i].playerA.name)) { players.push(data[i].playerA.name) }
+            if (!players.includes(data[i].playerB.name)) { players.push(data[i].playerB.name) }
           }
   
           // Set the next url for continue fetching

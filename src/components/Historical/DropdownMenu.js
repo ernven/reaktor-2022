@@ -5,14 +5,6 @@ import { Autocomplete, TextField, CircularProgress } from '@mui/material'
 export default function DropdownMenu({ players, selected, setSelected }) {
   const [inputValue, setInputValue] = useState('')
 
-  const menuData = useMemo(() => {
-    const playersArray = []
-    for (let player of players) {
-      playersArray.push(player)
-    }
-    return playersArray
-  }, [players])
-
   const loadingMenu = (
     <TextField
       disabled
@@ -24,7 +16,7 @@ export default function DropdownMenu({ players, selected, setSelected }) {
 
   const menu = (
     <Autocomplete
-      options={menuData}
+      options={players}
       value={selected}
       onChange={(_, newValue) => setSelected(newValue)}
       inputValue={inputValue}
@@ -34,5 +26,5 @@ export default function DropdownMenu({ players, selected, setSelected }) {
     />
   )
 
-  return players.size === 0 ? loadingMenu : menu
+  return players.length === 0 ? loadingMenu : menu
 }
