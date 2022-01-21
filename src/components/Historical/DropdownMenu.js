@@ -1,4 +1,4 @@
-import { useState, useMemo, Fragment } from 'react'
+import { useState, Fragment } from 'react'
 import { Autocomplete, TextField, CircularProgress } from '@mui/material'
 
 // This component will render a dropdown menu used to pick a player whose details will be shown.

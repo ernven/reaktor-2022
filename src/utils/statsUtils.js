@@ -1,5 +1,8 @@
 
-export const getPlayerStats = (player, data) => {
+export const getPlayerData = (player, data) => {
+
+  // In this array we save the whole history for this player.
+  let playerData = []
 
   // Let's store here just the data we need now. We could have all the win, losses and ties, or even more stats.
   let count = 0, wins = 0
@@ -10,6 +13,9 @@ export const getPlayerStats = (player, data) => {
   for (let i = 0; i < data.length; i++) {
     // Analyze the game if our selected player has been found.
     if (data[i].playerA.name === player) {
+
+      // Add the entry to the history array
+      playerData.push(data[i])
 
       const outcome = getOutcome(data[i].playerA.played, data[i].playerB.played)
 
@@ -24,6 +30,7 @@ export const getPlayerStats = (player, data) => {
       count++
 
     } else if (data[i].playerB.name === player) {
+      playerData.push(data[i])
       const outcome = getOutcome(data[i].playerB.played, data[i].playerA.played)
 
       if (outcome === 1) { wins++ }
@@ -40,12 +47,14 @@ export const getPlayerStats = (player, data) => {
   // Win ratio rounded to 3 decimals.
   const winRatio = Math.round((wins / count) * 1000) / 1000
 
-  return {gameCount: count, winRatio: winRatio, mostPlayed: mostPlayed}
+  const playerStats = {gameCount: count, winRatio: winRatio, mostPlayed: mostPlayed}
+
+  return { playerData, playerStats }
 }
 
 // Helper function to calculate the outcome of a game.
 // Returns 1 if player A won, 2 if player B won or 0 if the game was tied.
-const getOutcome = (handA, handB) => {
+export const getOutcome = (handA, handB) => {
   switch (handA) {
     case 'ROCK':
       if (handB === 'SCISSORS') {
