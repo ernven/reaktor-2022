@@ -1,4 +1,4 @@
-const defaultValues = {ongoing: [], finished: [], historical: []}
+const defaultValues = {ongoing: [], finished: [], historical: [], gameIds: new Set()}
 
 export default function dataReducer (state = defaultValues, action) {
   switch (action.type) {
@@ -22,30 +22,54 @@ export default function dataReducer (state = defaultValues, action) {
           ongoingGames.splice(i, 1)
         }
       }
-
+      
       // Then add the finished game to the list of last results (double check to avoid adding repeats).
       // Note: To prevent the list from growing too large, we can set a max 5 entries for the finished games.
       if (!(finishedGames.some(e => e.gameId === action.payload.gameId))) {
         if (finishedGames.length < 5) {
           finishedGames.push(action.payload)
         } else {
-          for (let i = 0; i < finishedGames.length; i++) {
-            finishedGames[i] = i === 4 ? action.payload : finishedGames[i+1]
+          for (let i = finishedGames.length; i > 0; i--) {
+            finishedGames[i-1] = i === 1 ? action.payload : finishedGames[i-2]
           }
         }
       }
-
+      
       // Lastyl, add the new data to historical data.
-      const newHistoricalData = state.historical.concat(action.payload)
+      // To avoid duplicates, double check first!
+      
+      let newHistoricalData = state.historical
+      let newGameIds = state.gameIds
 
-      return {ongoing: ongoingGames, finished: finishedGames,  historical: newHistoricalData}
+      if (!state.gameIds.has(action.payload.gameId)) {
+        newHistoricalData.push(action.payload)
+        newGameIds.add(action.payload.gameId)
+      } else {
+        console.log("DUPE FROM WS")
+      }
 
+      return {
+        ongoing: ongoingGames,
+        finished: finishedGames,
+        historical: newHistoricalData,
+        gameIds: newGameIds
+      }
     
     case 'GAME_RESULT_FROM_API':
-      // If the adding comes from the API, we simply add it to historical data.
-      const updatedHistoricalData = state.historical.concat(action.payload)
+      // If the adding comes from the API, we just add it to historical data.
+      let updatedHistoricalData = state.historical
+      let updatedGameIds = state.gameIds
 
-      return {...state,  historical: updatedHistoricalData}
+      for (let i = 0; i < action.payload.length; i++) {
+        if (!state.gameIds.has(action.payload[i].gameId)) {
+          updatedHistoricalData.push(action.payload[i])
+          updatedGameIds.add(action.payload[i].gameId)
+        } else {
+          console.log("DUPE FROM API")
+        }
+      }
+
+      return {...state,  historical: updatedHistoricalData, gameIds: updatedGameIds}
 
     default:
       return state

@@ -9,7 +9,7 @@ import './Main.css'
 
 export default function Main() {
   // Our reducer holding the data (both historical and live).
-  const [data, dispatch] = useReducer(dataReducer, {ongoing: [], finished: [], historical: []})
+  const [data, dispatch] = useReducer(dataReducer, {ongoing: [], finished: [], historical: [], gameIds: new Set()})
 
   // A state holding the list of players for our dropdown menu to use.
   const [playerList, setPlayerList] = useState([])
@@ -19,7 +19,7 @@ export default function Main() {
       let url = '/rps/history'
       let players = []
       // Let's keep the total data under 10000 for now.
-      while (data.historical.length < 2000) {
+      while (data.historical.length < 10000) {
         
         const { cursor, data } = await fetch(url)
           .then(res => res.status === 200 ? res.json() : console.log('Error: ' + res.status))
@@ -41,9 +41,6 @@ export default function Main() {
           // Set the next url for continue fetching
           url = cursor
 
-          const timeout = () => setTimeout(300)
-          return () => clearTimeout(timeout)
-
         } else {
           break
         }
@@ -51,7 +48,7 @@ export default function Main() {
     }
 
     fetchData()
-  }, [data.historical.length, playerList])
+  })
 
 
   return (

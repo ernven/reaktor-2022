@@ -1,8 +1,13 @@
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material'
 
+/*
+This component renders a table with the whole games history of a player.
+Currently, only the date is modified (formatted), parsed from the timestamp then to string using Locale.
+In the future, it could also display games' outcomes, etc.
+*/
 export default function PlayerDataTable({ data }) {
   return (
-    <Table stickyHeader sx={{ minWidth: 800 }}>
+    <Table sx={{ minWidth: 800 }}>
       <TableHead>
         <TableRow>
           <TableCell></TableCell>

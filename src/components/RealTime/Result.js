@@ -16,7 +16,7 @@ export default function Result({ game }) {
   }
 
   return (
-    <div key={game.gameId}>
+    <div>
       <Typography variant='body2' >
         {game.playerA.name + ' (' + game.playerA.played.toLowerCase() + ')'} vs. 
         {game.playerB.name + ' (' + game.playerB.played.toLowerCase() + ')'}

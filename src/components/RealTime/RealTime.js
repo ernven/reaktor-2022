@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import { Typography } from '@mui/material'
 
 import Result from './Result'
@@ -20,7 +20,7 @@ export default function RealTime({ ongoing, finished, dispatch }) {
         dispatch({ type: type, payload: payload})
       }
     }
-  }, [dispatch])
+  })
 
   // This function builds a list of matches for display.
   const buildGameList = games => {
@@ -28,7 +28,7 @@ export default function RealTime({ ongoing, finished, dispatch }) {
 
     if (games[0]) {
       if (games[0].playerA.played) {
-        games.forEach(game => list.push(<Result game={game}/>))
+        games.forEach(game => list.push(<Result key={game.gameId} game={game}/>))
       }
       else {
         games.forEach(game => list.push(
