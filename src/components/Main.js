@@ -1,17 +1,16 @@
-import { useState, useReducer, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Divider } from '@mui/material'
 
-import dataReducer from '../dataReducer'
+import { useDispatch } from '../dataContext'
+
 import RealTime from './RealTime/RealTime'
 import Historical from './Historical/Historical'
 
 import './Main.css'
 
-const reducerInit = {ongoing: [], finished: [], historical: [], gameIds: new Set()}
-
 export default function Main() {
-  // Our reducer holding the data (both historical and live).
-  const [gamesData, dispatch] = useReducer(dataReducer, reducerInit)
+  // The dispatch for our reducer.
+  const dispatch = useDispatch()
 
   // A state holding the list of players for our dropdown menu to use.
   const [playerList, setPlayerList] = useState([])
@@ -40,8 +39,6 @@ export default function Main() {
           // Update the games history data.
           dispatch({ type: 'GAME_RESULT_FROM_API', payload: data})
 
-          console.log(cursor)
-
           // Update the player list if needed.
           if (players !== playerListRef.current) {
             setPlayerList(players)
@@ -58,16 +55,16 @@ export default function Main() {
     }
 
     fetchData()
-  }, [])
+  }, [dispatch])
   
   return (
     <div id='main-container'>
       <div id='live-container'>  
-        <RealTime ongoing={gamesData.ongoing} finished={gamesData.finished} dispatch={dispatch} />
+        <RealTime />
       </div>
       <Divider orientation='vertical' flexItem={true} />
       <div id='historical-container'>
-        <Historical data={gamesData.historical} players={playerList} />  
+        <Historical players={playerList} />  
       </div>
     </div>
   )

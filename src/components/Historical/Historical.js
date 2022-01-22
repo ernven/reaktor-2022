@@ -5,7 +5,8 @@ import DropdownMenu from './DropdownMenu'
 import PlayerCard from './PlayerCard/PlayerCard'
 
 // This component (using the sub-components) should ask the user for a player and then show its details.
-export default function Historical({ players, data }) {
+export default function Historical({ players }) {
+  // A state for our currently selected player.
   const [selected, setSelected] = useState(null)
 
   return (
@@ -16,7 +17,7 @@ export default function Historical({ players, data }) {
 
         <DropdownMenu players={players} selected={selected} setSelected={setSelected} />
 
-        <PlayerCard player={selected} data={data} />
+        <PlayerCard player={selected} />
 
       </div>
 

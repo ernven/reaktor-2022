@@ -10,7 +10,7 @@ import PlayerDataTable from './PlayerDataTable'
 When the button is clicked and open set to "true", this component will display the player's full history.
 It will be a pop-up on desktop and should be responsive on mobile.
 */
-export default function PlayerDataList({ data }) {
+export default function PlayerDataList({ playerData }) {
   const [open, setOpen] = useState(false)
   
   // These are used to make the dialog box responsive.
@@ -38,7 +38,7 @@ export default function PlayerDataList({ data }) {
           </DialogActions>
         </div>
         <DialogContent>
-          <PlayerDataTable data={data} />
+          <PlayerDataTable data={playerData} />
         </DialogContent>
       </Dialog>
 

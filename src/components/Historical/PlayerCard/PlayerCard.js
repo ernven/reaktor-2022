@@ -1,14 +1,17 @@
 import { Card, CardContent, CardActions, Typography } from '@mui/material'
 
+import { useData } from '../../../dataContext'
 import { getPlayerData } from '../../../utils/statsUtils'
+
 import PlayerDataDialog from './PlayerDataDialog'
 
 // This component will display a card with a selected player's details.
-export default function PlayerCard({ player, data }) {
+export default function PlayerCard({ player }) {
+  const { historical } = useData()
 
   const buildPlayerCard = () => {
     if (player) {
-      const { playerData, playerStats } = getPlayerData(player, data)
+      const { playerData, playerStats } = getPlayerData(player, historical)
 
       // Handling many values for most played hand.
       const mostPlayed = () => {
@@ -34,7 +37,7 @@ export default function PlayerCard({ player, data }) {
           </CardContent>
 
           <CardActions>
-            <PlayerDataDialog data={playerData} />
+            <PlayerDataDialog playerData={playerData} />
           </CardActions>
 
         </Card>

@@ -2,8 +2,12 @@ import { useEffect } from 'react'
 import { Typography } from '@mui/material'
 
 import Result from './Result'
+import { useData, useDispatch } from '../../dataContext'
 
-export default function RealTime({ ongoing, finished, dispatch }) {
+export default function RealTime() {
+  // State and dispatch are coming from context.
+  const { ongoing, finished } = useData()
+  const dispatch = useDispatch()
 
   useEffect(() => {
     const webSocket = new WebSocket(process.env.REACT_APP_WS_URL)

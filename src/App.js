@@ -1,13 +1,17 @@
+import DataProvider from './dataContext'
+
+import Header from './components/Header'
 import Main from './components/Main'
 
 import './App.css'
-import Header from './components/Header'
 
 function App() {
   return (
     <div id='app-container'>
       <Header />
-      <Main />
+      <DataProvider>
+        <Main />
+      </DataProvider>
     </div>
   )
 }
