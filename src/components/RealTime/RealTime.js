@@ -20,7 +20,7 @@ export default function RealTime({ ongoing, finished, dispatch }) {
         dispatch({ type: type, payload: payload})
       }
     }
-  })
+  }, [dispatch])
 
   // This function builds a list of matches for display.
   const buildGameList = games => {

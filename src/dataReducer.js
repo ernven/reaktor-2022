@@ -1,6 +1,5 @@
-const defaultValues = {ongoing: [], finished: [], historical: [], gameIds: new Set()}
-
-export default function dataReducer (state = defaultValues, action) {
+// This reducer takes care of the data state for the application.
+export default function dataReducer (state, action) {
   switch (action.type) {
 
     case 'GAME_BEGIN':
@@ -36,18 +35,15 @@ export default function dataReducer (state = defaultValues, action) {
       }
       
       // Lastyl, add the new data to historical data.
-      // To avoid duplicates, double check first!
-      
       let newHistoricalData = state.historical
       let newGameIds = state.gameIds
 
+      // To avoid duplicates, double check first!
       if (!state.gameIds.has(action.payload.gameId)) {
         newHistoricalData.push(action.payload)
         newGameIds.add(action.payload.gameId)
-      } else {
-        console.log("DUPE FROM WS")
       }
-
+      
       return {
         ongoing: ongoingGames,
         finished: finishedGames,
@@ -56,7 +52,7 @@ export default function dataReducer (state = defaultValues, action) {
       }
     
     case 'GAME_RESULT_FROM_API':
-      // If the adding comes from the API, we just add it to historical data.
+      // If the action comes from the API fetch, we just add the payload to historical data.
       let updatedHistoricalData = state.historical
       let updatedGameIds = state.gameIds
 
@@ -65,7 +61,7 @@ export default function dataReducer (state = defaultValues, action) {
           updatedHistoricalData.push(action.payload[i])
           updatedGameIds.add(action.payload[i].gameId)
         } else {
-          console.log("DUPE FROM API")
+          console.log("DUPE FROM API") // KEEP THIS TO CHECK WITH LOCALSTORAGE
         }
       }
 
