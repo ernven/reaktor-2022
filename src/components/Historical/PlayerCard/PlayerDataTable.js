@@ -1,4 +1,9 @@
-import { Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material'
+import { useMemo } from 'react'
+import { AgGridReact } from '@ag-grid-community/react'
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'
+
+import '@ag-grid-community/core/dist/styles/ag-grid.css'
+import '@ag-grid-community/core/dist/styles/ag-theme-material.css'
 
 /*
 This component renders a table with the whole games history of a player.
@@ -6,41 +11,60 @@ Currently, only the date is modified (formatted), parsed from the timestamp then
 In the future, it could also display games' outcomes, etc.
 */
 export default function PlayerDataTable({ data }) {
-  return (
-    <Table sx={{ minWidth: 800 }}>
-      <TableHead>
-        <TableRow>
-          <TableCell></TableCell>
-          <TableCell align="center" colSpan={2}>
-            Player One
-          </TableCell>
-          <TableCell align="center" colSpan={2}>
-            Player Two
-          </TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>Date</TableCell>
-          <TableCell>Name</TableCell>
-          <TableCell>Hand</TableCell>
-          <TableCell>Name</TableCell>
-          <TableCell>Hand</TableCell>
-        </TableRow>
-      </TableHead>
 
-      <TableBody>
-        {data.map(entry => (
-          <TableRow
-            key={entry.gameId}
-            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-          >
-            <TableCell>{(new Date(entry.t)).toLocaleString()}</TableCell>
-            <TableCell>{entry.playerA.name}</TableCell>
-            <TableCell>{entry.playerA.played}</TableCell>
-            <TableCell>{entry.playerB.name}</TableCell>
-            <TableCell>{entry.playerB.played}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+  // Defining the data and columns, memoized to prevent unnecessary updates.
+  const tableData = useMemo(() => data, [data])
+
+  const columnDefs = useMemo(() => [
+    {
+      headerName: 'Date',
+      field: 't',
+      valueFormatter: row => (new Date(row.value)).toLocaleString(),
+      filter: 'agDateColumnFilter',
+      filterParams: {defaultOption: 'inRange'},
+      flex: 1.5,
+    },
+    {
+      headerName: 'Player One',
+      field: 'playerA.name',
+      flex: 1.25,
+    },
+    {
+      headerName: 'Hand',
+      field: 'playerA.played',
+      flex: 1,
+    },
+    {
+      headerName: 'Player Two',
+      field: 'playerB.name',
+      flex: 1.25,
+    },
+    {
+      headerName: 'Hand',
+      field: 'playerB.played',
+      flex: 1,
+    },
+  ], [])
+
+  const defaultColDef = useMemo(() => ({
+    sortable: true,
+    filter: true,
+    suppressMenu: true,
+    floatingFilter: true,
+  }), [])
+
+  const modules = useMemo(() => [ClientSideRowModelModule], [])
+
+  return (
+  <div style={{height: '80vh', width: '78vw'}}>
+    <AgGridReact
+      className='ag-theme-material'
+      animateRows='true'
+      modules={modules}
+      columnDefs={columnDefs}
+      defaultColDef={defaultColDef}
+      rowData={tableData}>
+    </AgGridReact>
+  </div>
   )
 }
