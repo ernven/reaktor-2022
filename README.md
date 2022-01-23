@@ -1,4 +1,4 @@
-# reaktor-2022 (Frontend version- replaced with full stack!)
+# reaktor-2022 (Old frontend version- replaced with full stack!)
 
 This is the first version of my solution for the assignment part of the application for Reaktor's 2022 summer program (more info [here](https://www.reaktor.com/assignment-2022-developers/)).
 
